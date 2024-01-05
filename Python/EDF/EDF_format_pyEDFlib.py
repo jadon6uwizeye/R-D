@@ -3,24 +3,28 @@ from pyedflib import highlevel
 import numpy as np
 
 # write an edf file
-def write_edf(filename, signals, signal_headers=None, header=None):
+def write_edf(filename, signals, channel_names=None, header=None):
     if signals is None:
         signals = np.random.rand(5, 256 * 300) * 200  # 5 minutes of random signal
+    else:
+        print(signals)
+        signals = np.array(signals)
+        print(signals)
 
-    if signal_headers is None:
-        channel_names = ["ch1", "ch2", "ch3", "ch4", "ch5"]
-        signal_headers = highlevel.make_signal_headers(
-            channel_names,
-            sample_rate=200,
-            physical_min=-300,
-            physical_max=300,
-            digital_min=0,
-            digital_max=4095,
-        )
+    channel_names = ["ch1", "ch2", "ch3", "ch4", "ch5"] if channel_names is None else channel_names
+    signal_headers = highlevel.make_signal_headers(
+        channel_names,
+        sample_rate=200,
+        physical_min=-300,
+        physical_max=300,
+        digital_min=0,
+        digital_max=4095,
+    )
 
     if header is None:
         header = highlevel.make_header(patientname="patient_x", sex="Female")
 
+    print(type(signals))
     highlevel.write_edf(
         "./edf_file.edf" if filename is None else filename + ".edf",
         signals,
@@ -37,6 +41,14 @@ def write_edf(filename, signals, signal_headers=None, header=None):
     # return file location
     return filename + ".edf"
 
+def check_file_exists(file_name):
+    try:
+        with open(file_name, "r") as f:
+            return True
+    except IOError:
+        return False
+    
+    
 
 # # read an edf file
 # signals, signal_headers, header = highlevel.read_edf('edf_file.edf', ch_names=['ch1', 'ch2'])
