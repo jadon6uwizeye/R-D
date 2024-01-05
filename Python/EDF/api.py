@@ -13,7 +13,7 @@ class EDF(BaseModel):
 
 
 @app.post("/edf/", status_code=200)
-async def create_item(data: EDF):
+async def create_EDF_file(data: EDF):
     try:
         edf.write_edf(
             filename="edf_file",
